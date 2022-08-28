@@ -29,13 +29,12 @@ function App() {
   }
 
   useEffect(() => {
-    movies.filter(movie => movie.title.includes(search)).map(movie => <MovieCard movie={movie} />)
-
-    searchMovies('batman')}, []);
+}, []);
   return (
     <div className="App">
       <h1>MovieLand</h1>
       <div className="search">
+        <div className="searchbox">
         <input
           placeholder="Search for movies"
           value={search}
@@ -43,7 +42,7 @@ function App() {
           onChange={(e) => {
             setSearch(e.target.value);
           }}
-        />
+          />
 
       
         <img
@@ -54,7 +53,7 @@ function App() {
           }}
         />
       </div>
-
+      </div>
       {movies?.length > 0 ? (
         <div className="container">
           {movies.map((movie) => (
