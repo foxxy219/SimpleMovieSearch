@@ -1,23 +1,71 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { useEffect, useState } from "react";
+import "./App.css";
+import SearchIcon from "./search.svg";
+import MovieCard from "./MovieCard";
+import TextField from "@material-ui/core/TextField";
+import Autocomplete from "@material-ui/lab/Autocomplete";
+
+const API_URL = "https://www.omdbapi.com/?apikey=de1d8008";
 
 function App() {
+  const [movies, setMovies] = useState([]);
+  const [search, setSearch] = useState("");
+  const [myOptions, setMyOptions] = useState([]);
+
+  const searchMovies = async (title) => {
+    const respone = await fetch(`${API_URL}&s=${title}`);
+    const data = await respone.json();
+    setMovies(data.Search);
+  };
+
+  const dynamicSearch = async (title) => {
+      const respone = await fetch(`${API_URL}&s=${title}`);
+      const data = await respone.json();
+      for (var i = 0; i < data.Search.length; i++) {
+        myOptions.push(data.Search[i].Title)
+      }
+      setMyOptions(myOptions);
+  }
+
+  useEffect(() => {
+    movies.filter(movie => movie.title.includes(search)).map(movie => <MovieCard movie={movie} />)
+
+    searchMovies('batman')}, []);
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>MovieLand</h1>
+      <div className="search">
+        <input
+          placeholder="Search for movies"
+          value={search}
+          onKeyPress={(e) => e.key === 'Enter' && searchMovies(search)}
+          onChange={(e) => {
+            setSearch(e.target.value);
+          }}
+        />
+
+      
+        <img
+          src={SearchIcon}
+          alt="search"
+          onClick={() => {
+            searchMovies(search);
+          }}
+        />
+      </div>
+
+      {movies?.length > 0 ? (
+        <div className="container">
+          {movies.map((movie) => (
+            <MovieCard movie={movie} />
+          ))}
+        </div>
+      ) : (
+        <div className="empty">
+          <h2>No movies found</h2>
+        </div>
+      )}
     </div>
   );
 }
